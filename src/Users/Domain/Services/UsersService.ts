@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PasswordUtils } from 'src/Common/Utils/PasswordValidator';
 import { UsersExceptions } from '../Exceptions/UsersExceptions';
-import { User } from '../Models/User';
-import { UsersRepository } from '../Repository/UsersRepository';
+import { User } from '../Models/User.model';
+import { UsersRepository } from '../../Ports/Repository/UsersRepository';
 
 @Injectable()
 export class UsersService {
@@ -14,13 +14,13 @@ export class UsersService {
     email = email.replace(/\s/g, '');
 
     if (await this.usersRepository.findByEmail(email)) {
-      UsersExceptions.UserEmailAlreadyUsed();
+      throw UsersExceptions.UserEmailAlreadyUsed();
     }
 
     const { isValid, errors } = PasswordUtils.Validator(password);
 
     if (!isValid) {
-      UsersExceptions.InvalidPassword(errors);
+      throw UsersExceptions.InvalidPassword(errors);
     }
 
     password = PasswordUtils.Hash(password, email);
@@ -30,21 +30,21 @@ export class UsersService {
     return this.usersRepository.create(user);
   }
 
-  findById(id: string): Promise<User> {
-    return this.usersRepository.findById(id);
+  async findById(id: string): Promise<User> {
+    const res = await this.usersRepository.findById(id);
+    return res;
   }
 
-  validateCredentials(email: string, password: string): User | void {
-    this.usersRepository
-      .findByEmail(email)
-      .then((user) => {
-        password = PasswordUtils.Hash(password, email);
-        if (user.password == password) {
-          return user;
-        }
-      })
-      .catch((err) => {
-        throw new Error(err);
-      });
+  async validateCredentials(email: string, password: string): Promise<User> {
+    const user = await this.usersRepository.findByEmail(email);
+    if (!user) {
+      UsersExceptions.UserNotFound();
+    }
+
+    password = PasswordUtils.Hash(password, email);
+    if (user.password === password) {
+      return user;
+    }
+    return null;
   }
 }

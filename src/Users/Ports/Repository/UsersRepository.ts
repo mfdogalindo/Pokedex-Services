@@ -1,7 +1,6 @@
-import { User } from '../Models/User';
+import { User } from '../../Domain/Models/User.model';
 
 export interface UsersRepository {
-  findAll(): Promise<User[]>;
   create(user: User): Promise<User>;
   findById(id: string): Promise<User>;
   findByEmail(email: string): Promise<User>;
