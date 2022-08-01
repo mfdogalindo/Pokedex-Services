@@ -10,8 +10,8 @@ import {
   UseFilters,
 } from '@nestjs/common';
 import { HttpExceptionFilter } from 'src/Common/Exceptions/HttpExceptionFilter';
-import { CreateUserCommand } from '../../Adapters/Commands/CreateUserCommand';
-import { ValidateCredentialsCommand } from '../../Adapters/Commands/ValidateCredentialsCommand';
+import { CreateUserCommand } from '../../Ports/Commands/CreateUserCommand';
+import { ValidateCredentialsCommand } from '../../Ports/Commands/ValidateCredentialsCommand';
 import { UsersExceptions } from '../../Domain/Exceptions/UsersExceptions';
 import { User } from '../../Domain/Models/User.model';
 import { UsersService } from '../../Domain/Services/UsersService';

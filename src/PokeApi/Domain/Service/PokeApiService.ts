@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { PokeApiGateway } from 'src/PokeApi/Adapters/Gateways/PokeApiGateway';
 
 @Injectable()
 export class PokeApiService {
-  constructor() {}
+  constructor(
+    @Inject(PokeApiGateway) private readonly pokeApiGateway: PokeApiGateway,
+  ) {}
 
-  async findById(id: string): Promise<any> {
-     
+  async findByName(name: string): Promise<any> {
+    return this.pokeApiGateway.findByName(name);
   }
 }

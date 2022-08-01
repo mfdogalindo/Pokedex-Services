@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PasswordUtils } from 'src/Common/Utils/PasswordValidator';
 import { UsersExceptions } from '../Exceptions/UsersExceptions';
 import { User } from '../Models/User.model';
-import { UsersRepository } from '../../Ports/Repository/UsersRepository';
+import { UsersRepository } from '../../Adapters/Repository/UsersRepository';
 
 @Injectable()
 export class UsersService {
