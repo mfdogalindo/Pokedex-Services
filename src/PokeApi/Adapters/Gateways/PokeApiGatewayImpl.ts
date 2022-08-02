@@ -6,12 +6,26 @@ import { PokeApiGateway } from './PokeApiGateway';
 
 @Injectable()
 export class PokeApiGatewayImpl implements PokeApiGateway {
+  pokeApiURL = 'https://pokeapi.co/api/v2/pokemon';
+
   constructor(private readonly httpService: HttpService) {}
 
   async findByName(name: string): Promise<PokemonEntity> {
     try {
+      console.log(`${this.pokeApiURL}/${name}`);
       const { data } = await this.httpService.axiosRef.get(
-        `https://pokeapi.co/api/v2/pokemon/${name}`,
+        `${this.pokeApiURL}/${name}`,
+      );
+      return data;
+    } catch {
+      throw new ProcessErrorException('PokeApi not responding');
+    }
+  }
+
+  async findPages(offset: number, limit: number): Promise<any> {
+    try {
+      const { data } = await this.httpService.axiosRef.get(
+        `${this.pokeApiURL}?offset=${offset}&limit=${limit}`,
       );
       return data;
     } catch {
