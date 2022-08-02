@@ -12,7 +12,6 @@ export class PokeApiGatewayImpl implements PokeApiGateway {
 
   async findByName(name: string): Promise<PokemonEntity> {
     try {
-      console.log(`${this.pokeApiURL}/${name}`);
       const { data } = await this.httpService.axiosRef.get(
         `${this.pokeApiURL}/${name}`,
       );
