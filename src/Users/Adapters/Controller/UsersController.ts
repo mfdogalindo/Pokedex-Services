@@ -12,9 +12,12 @@ import {
 import { HttpExceptionFilter } from 'src/Common/Exceptions/HttpExceptionFilter';
 import { CreateUserCommand } from '../../Ports/Commands/CreateUserCommand';
 import { ValidateCredentialsCommand } from '../../Ports/Commands/ValidateCredentialsCommand';
-import { UsersExceptions } from '../../Domain/Exceptions/UsersExceptions';
 import { User } from '../../Domain/Models/User.model';
 import { UsersService } from '../../Domain/Services/UsersService';
+import {
+  InvalidCredentialsException,
+  UserNotFoundException,
+} from 'src/Users/Domain/Exceptions/UsersExceptions';
 
 @Controller({
   path: '',
@@ -35,7 +38,7 @@ export class UsersController {
       }
       return response.status(200).json(user);
     } catch {
-      UsersExceptions.UserNotFound();
+      throw new UserNotFoundException();
     }
   }
 
@@ -48,16 +51,12 @@ export class UsersController {
       );
       return cmd.email == validation?.email;
     } catch {
-      UsersExceptions.InvalidCredentials();
+      throw new InvalidCredentialsException();
     }
   }
 
   @Post('/users')
   async create(@Body() cmd: CreateUserCommand): Promise<User> {
-    try {
-      return await this.usersService.create(cmd.name, cmd.email, cmd.password);
-    } catch {
-      UsersExceptions.ProcessError();
-    }
+    return await this.usersService.create(cmd.name, cmd.email, cmd.password);
   }
 }

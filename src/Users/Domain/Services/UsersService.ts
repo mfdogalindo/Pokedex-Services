@@ -1,6 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PasswordUtils } from 'src/Common/Utils/PasswordValidator';
-import { UsersExceptions } from '../Exceptions/UsersExceptions';
+import {
+  InvalidPasswordException,
+  UserEmailAlreadyUsedException,
+  UserNotFoundException,
+} from '../Exceptions/UsersExceptions';
 import { User } from '../Models/User.model';
 import { UsersRepository } from '../../Adapters/Repository/UsersRepository';
 
@@ -14,13 +18,13 @@ export class UsersService {
     email = email.replace(/\s/g, '');
 
     if (await this.usersRepository.findByEmail(email)) {
-      throw UsersExceptions.UserEmailAlreadyUsed();
+      throw new UserEmailAlreadyUsedException();
     }
 
     const { isValid, errors } = PasswordUtils.Validator(password);
 
     if (!isValid) {
-      throw UsersExceptions.InvalidPassword(errors);
+      throw new InvalidPasswordException(errors);
     }
 
     password = PasswordUtils.Hash(password, email);
@@ -38,7 +42,7 @@ export class UsersService {
   async validateCredentials(email: string, password: string): Promise<User> {
     const user = await this.usersRepository.findByEmail(email);
     if (!user) {
-      UsersExceptions.UserNotFound();
+      throw new UserNotFoundException();
     }
 
     password = PasswordUtils.Hash(password, email);

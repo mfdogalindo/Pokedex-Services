@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { PokeApiExceptions } from 'src/PokeApi/Domain/Exceptions/PokeApiExceptions';
+import { ProcessErrorException } from 'src/Common/Exceptions/GenericExceptions';
 import { PokemonEntity } from 'src/PokeApi/Domain/Models/PokemonEntity.model';
 import { PokeApiGateway } from './PokeApiGateway';
 
@@ -15,7 +15,7 @@ export class PokeApiGatewayImpl implements PokeApiGateway {
       );
       return data;
     } catch {
-      PokeApiExceptions.ProcessError();
+      throw new ProcessErrorException('PokeApi not responding');
     }
   }
 }
