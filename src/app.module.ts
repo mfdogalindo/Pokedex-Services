@@ -1,16 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { UsersModule } from './Users/users.module';
-import { PokeApiModule } from './PokeApi/poke-api.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './Common/Exceptions/HttpExceptionFilter';
+import { PokeApiModule } from './PokeApi/poke-api.module';
 
 @Module({
-  imports: [
-    UsersModule,
-    PokeApiModule,
-    ConfigModule.forRoot({ isGlobal: true }),
-  ],
+  imports: [PokeApiModule, ConfigModule.forRoot({ isGlobal: true })],
   controllers: [],
   providers: [
     {

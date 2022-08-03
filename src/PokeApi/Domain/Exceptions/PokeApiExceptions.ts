@@ -5,3 +5,9 @@ export class PokemonNotFoundException extends HttpException {
     super('Pokemon not found', HttpStatus.NOT_FOUND);
   }
 }
+
+export class UnauthorizedException extends HttpException {
+  constructor() {
+    super('Unauthorized user', HttpStatus.UNAUTHORIZED);
+  }
+}
