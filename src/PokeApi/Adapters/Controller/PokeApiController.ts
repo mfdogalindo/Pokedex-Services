@@ -1,4 +1,13 @@
-import { Controller, Get, Param, Query, Res, UseFilters } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  Res,
+  UseFilters,
+  UseGuards,
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { HttpExceptionFilter } from 'src/Common/Exceptions/HttpExceptionFilter';
 import { PokeApiService } from '../../Domain/Service/PokeApiService';
 
@@ -21,6 +30,7 @@ export class PokeApiController {
   }
 
   @Get('/:name')
+  @UseGuards(AuthGuard('jwt'))
   async findByName(@Param('name') name: string, @Res() response): Promise<any> {
     const pokemon = await this.pokeApiService.findByName(name);
     return response.status(200).json(pokemon);

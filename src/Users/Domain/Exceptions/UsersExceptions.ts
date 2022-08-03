@@ -10,6 +10,13 @@ export class InvalidCredentialsException extends HttpException {
     super('Invalid credentials', HttpStatus.FORBIDDEN);
   }
 }
+
+export class UnauthorizedException extends HttpException {
+  constructor() {
+    super('Unauthorized user', HttpStatus.UNAUTHORIZED);
+  }
+}
+
 export class UserEmailAlreadyUsedException extends HttpException {
   constructor() {
     super('Email is already used', HttpStatus.BAD_REQUEST);

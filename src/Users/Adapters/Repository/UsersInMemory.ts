@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '../../Domain/Models/User.model';
+import { UserEntity } from 'src/Users/Domain/Models/User.entity';
 import { UsersRepository } from './UsersRepository';
 
 @Injectable()
 export class UsersInMemory implements UsersRepository {
-  private readonly users: User[] = [];
+  private readonly users: UserEntity[] = [];
 
-  async findById(id: string): Promise<User | undefined> {
+  async findById(id: string): Promise<UserEntity | undefined> {
     return this.users.find((user) => user.id === id);
   }
 
-  async findByEmail(email: string): Promise<User | undefined> {
+  async findByEmail(email: string): Promise<UserEntity | undefined> {
     return this.users.find((user) => user.email === email);
   }
 
-  create(user): Promise<User> {
+  create(user): Promise<UserEntity> {
     this.users.push(user);
     return new Promise((resolve) => resolve(user));
   }
@@ -22,7 +22,7 @@ export class UsersInMemory implements UsersRepository {
   async validateCredentials(
     email: string,
     password: string,
-  ): Promise<User | undefined> {
+  ): Promise<UserEntity | undefined> {
     return this.users.find(
       (user) => user.email === email && user.password === password,
     );

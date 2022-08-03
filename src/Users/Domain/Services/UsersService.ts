@@ -7,6 +7,8 @@ import {
 } from '../Exceptions/UsersExceptions';
 import { User } from '../Models/User.model';
 import { UsersRepository } from '../../Adapters/Repository/UsersRepository';
+import { UsersEntityToUser } from 'src/Users/Ports/Mappers/UsersEntityToUser';
+import { UserEntity } from '../Models/User.entity';
 
 @Injectable()
 export class UsersService {
@@ -29,25 +31,27 @@ export class UsersService {
 
     password = PasswordUtils.Hash(password, email);
 
-    const user = new User(name, email, password);
+    const userEntity = new UserEntity(name, email, password);
 
-    return this.usersRepository.create(user);
+    await this.usersRepository.create(userEntity);
+
+    return UsersEntityToUser(userEntity);
   }
 
   async findById(id: string): Promise<User> {
-    const res = await this.usersRepository.findById(id);
-    return res;
+    const userEntity = await this.usersRepository.findById(id);
+    return UsersEntityToUser(userEntity);
   }
 
   async validateCredentials(email: string, password: string): Promise<User> {
-    const user = await this.usersRepository.findByEmail(email);
-    if (!user) {
+    const userEntity = await this.usersRepository.findByEmail(email);
+    if (!userEntity) {
       throw new UserNotFoundException();
     }
 
     password = PasswordUtils.Hash(password, email);
-    if (user.password === password) {
-      return user;
+    if (userEntity.password === password) {
+      return UsersEntityToUser(userEntity);
     }
     return null;
   }

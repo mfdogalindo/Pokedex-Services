@@ -5,9 +5,10 @@ import {
   Logger,
   Param,
   Post,
-  Put,
+  Request,
   Res,
   UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 import { HttpExceptionFilter } from 'src/Common/Exceptions/HttpExceptionFilter';
 import { CreateUserCommand } from '../../Ports/Commands/CreateUserCommand';
@@ -18,6 +19,8 @@ import {
   InvalidCredentialsException,
   UserNotFoundException,
 } from 'src/Users/Domain/Exceptions/UsersExceptions';
+import { AuthService } from 'src/Users/Domain/Services/AuthService';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller({
   path: '',
@@ -27,7 +30,10 @@ import {
 export class UsersController {
   private readonly logger = new Logger('UsersControllers');
 
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Get('/users/:id')
   async findById(@Param('id') id: string, @Res() response): Promise<User> {
@@ -42,17 +48,23 @@ export class UsersController {
     }
   }
 
-  @Put('/login')
-  async login(@Body() cmd: ValidateCredentialsCommand): Promise<boolean> {
-    try {
-      const validation = await this.usersService.validateCredentials(
-        cmd.email,
-        cmd.password,
-      );
-      return cmd.email == validation?.email;
-    } catch {
+  @Post('/login')
+  async login(@Body() cmd: ValidateCredentialsCommand): Promise<any> {
+    const user = await this.usersService.validateCredentials(
+      cmd.email,
+      cmd.password,
+    );
+    if (cmd.email == user?.email) {
+      return this.authService.createToken(user);
+    } else {
       throw new InvalidCredentialsException();
     }
+  }
+
+  @Post('/validate')
+  @UseGuards(AuthGuard('jwt'))
+  async validate(@Request() req: any): Promise<any> {
+    return req.user;
   }
 
   @Post('/users')

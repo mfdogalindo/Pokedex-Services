@@ -1,9 +1,9 @@
-import { User } from '../../Domain/Models/User.model';
+import { UserEntity } from 'src/Users/Domain/Models/User.entity';
 
 export interface UsersRepository {
-  create(user: User): Promise<User>;
-  findById(id: string): Promise<User>;
-  findByEmail(email: string): Promise<User>;
+  create(user: UserEntity): Promise<UserEntity>;
+  findById(id: string): Promise<UserEntity>;
+  findByEmail(email: string): Promise<UserEntity>;
 }
 
 export const UsersRepository = Symbol('UsersRepository');
